@@ -10,6 +10,7 @@ const orgServicesController = {
       res.status(500).json({ message: "Server error" });
     }
   },
+
   create: async (req, res) => {
     try {
       const id = await OrgServices.create(req.body);
@@ -19,6 +20,7 @@ const orgServicesController = {
       res.status(500).json({ message: "Server error" });
     }
   },
+
   update: async (req, res) => {
     try {
       const affected = await OrgServices.update(req.params.id, req.body);
@@ -29,6 +31,7 @@ const orgServicesController = {
       res.status(500).json({ message: "Server error" });
     }
   },
+
   delete: async (req, res) => {
     try {
       const affected = await OrgServices.delete(req.params.id);

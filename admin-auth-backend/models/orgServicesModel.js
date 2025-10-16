@@ -1,46 +1,45 @@
 const db = require("../config/db");
 
 const OrgServices = {
-  // Get all services for a specific organization
-  getAllByOrg: async (orgid) => {
-    const [rows] = await db.query(
-      `SELECT os.*, sc.service_cat_name 
-       FROM org_services os
-       LEFT JOIN service_cat sc ON os.service_cat_id = sc.service_cat_id
-       WHERE os.orgid = ?`,
-      [orgid]
-    );
+  getAllByOrg: async (orgId) => {
+    const sql = `
+      SELECT s.*, sc.icon, sc.sr_name AS sr_name_cat
+      FROM org_services s
+      JOIN service_cat sc ON s.sc_id = sc.sc_id
+      WHERE s.orgid = ?
+    `;
+    const [rows] = await db.query(sql, [orgId]);
     return rows;
   },
 
-  // Create a new org service
   create: async (data) => {
-    const { orgid, service_cat_id, service_name, price, description } = data;
+    const { orgid, sc_id, sr_type, duration, rate, available_on, timing_from, timing_to } = data;
     const [result] = await db.query(
-      "INSERT INTO org_services (orgid, service_cat_id, service_name, price, description) VALUES (?, ?, ?, ?, ?)",
-      [orgid, service_cat_id, service_name, price, description]
+      `INSERT INTO org_services (orgid, sc_id, sr_type, duration, rate, available_on, timing_from, timing_to)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [orgid, sc_id, sr_type, duration, rate, available_on, timing_from, timing_to]
     );
     return result.insertId;
   },
 
-  // Update a service
   update: async (id, data) => {
-    const { service_name, price, description } = data;
+    const { sc_id, sr_type, duration, rate, available_on, timing_from, timing_to } = data;
     const [result] = await db.query(
-      "UPDATE org_services SET service_name=?, price=?, description=? WHERE org_service_id=?",
-      [service_name, price, description, id]
+      `UPDATE org_services 
+       SET sc_id=?, sr_type=?, duration=?, rate=?, available_on=?, timing_from=?, timing_to=? 
+       WHERE org_sid=?`,
+      [sc_id, sr_type, duration, rate, available_on, timing_from, timing_to, id]
     );
     return result.affectedRows;
   },
 
-  // Delete a service
   delete: async (id) => {
     const [result] = await db.query(
-      "DELETE FROM org_services WHERE org_service_id=?",
+      `DELETE FROM org_services WHERE org_sid=?`,
       [id]
     );
     return result.affectedRows;
-  },
+  }
 };
 
 module.exports = OrgServices;

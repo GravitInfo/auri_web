@@ -9,6 +9,8 @@ const organizationPicsRoutes = require("./routes/organizationPicsRoutes");
 const serviceCatRoutes = require("./routes/serviceCatRoutes");
 const orgServicesRoutes = require("./routes/orgServicesRoutes");
 const serviceProvidersRoutes = require("./routes/serviceProvidersRoutes");
+const usersRoutes = require('./routes/usersRoutes');
+const bannerRoutes = require('./routes/bannerRoutes');
 
 const app = express();
 
@@ -21,6 +23,7 @@ app.use(express.urlencoded({ extended: true })); // parse form data
 app.use("/uploads/orgs", express.static(path.join(__dirname, "uploads/orgs")));
 app.use("/uploads/icons", express.static(path.join(__dirname, "uploads/icons")));
 app.use("/uploads/providers", express.static(path.join(__dirname, "uploads/providers")));
+app.use('/uploads/banners', express.static(path.join(__dirname, 'uploads/banners')));
 
 // ===== Routes =====
 app.use("/api/admin", adminRoutes);
@@ -29,6 +32,8 @@ app.use("/api/organization-pics", organizationPicsRoutes);
 app.use("/api/service-cat", serviceCatRoutes);
 app.use("/api/org-services", orgServicesRoutes);
 app.use("/api/service-providers", serviceProvidersRoutes);
+app.use("/api/users", usersRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // ===== Default root route =====
 app.get("/", (req, res) => {

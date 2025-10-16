@@ -20,6 +20,7 @@ export default function ViewOrganization() {
     fetchData();
   }, [id]);
 
+
   if (!orgData)
     return (
       <p className="p-6 text-gray-500 text-center text-lg">
@@ -49,7 +50,8 @@ export default function ViewOrganization() {
             <span className="font-semibold">Email:</span> {organization.email}
           </p>
           <p className="text-gray-700 break-words">
-            <span className="font-semibold">Phone:</span> {organization.phone_no}
+            <span className="font-semibold">Phone:</span>{" "}
+            {organization.phone_no}
           </p>
           <p className="text-gray-700 break-words">
             <span className="font-semibold">Address:</span>{" "}
@@ -61,8 +63,7 @@ export default function ViewOrganization() {
           </p>
           {organization.about && (
             <p className="text-gray-700 break-words">
-              <span className="font-semibold">About:</span>{" "}
-              {organization.about}
+              <span className="font-semibold">About:</span> {organization.about}
             </p>
           )}
         </div>
@@ -135,6 +136,9 @@ export default function ViewOrganization() {
                           src={`http://localhost:5000/uploads/icons/${s.icon}`}
                           alt={s.sr_name}
                           className="w-6 h-6 mx-auto"
+                          onError={(e) => {
+                            e.target.src = "/placeholder.png";
+                          }}
                         />
                       ) : (
                         <span className="text-gray-400">N/A</span>

@@ -29,6 +29,10 @@ import ServiceProvidersList from "./ServiceProviders/ServiceProvidersList";
 import AddEditServiceProvider from "./ServiceProviders/AddEditServiceProvider";
 import ViewServiceProvider from "./ServiceProviders/ViewServiceProvider";
 
+import BannerList from "./Banner/BannerList";
+import AddEditBanner from "./Banner/AddEditBanner";
+import ViewBanner from "./Banner/ViewBanner";
+
 // ---------------------- Dashboard Overview ----------------------
 const DashboardOverview = () => {
   const stats = [
@@ -138,6 +142,11 @@ export default function Dashboard() {
           <Route path="serviceProviders/org/:orgId/add" element={<AddEditServiceProvider />} />
           <Route path="serviceProviders/org/:orgId/edit/:id" element={<AddEditServiceProvider />} />
           <Route path="serviceProviders/org/:orgId/view/:id" element={<ViewServiceProvider />} />
+
+          <Route path="/banners" element={<BannerList />} />
+          <Route path="/banners/add" element={<AddEditBanner />} />
+          <Route path="/banners/edit/:id" element={<AddEditBanner />} />
+          <Route path="/banners/view/:id" element={<ViewBanner />} />
 
           {/* Settings */}
           <Route path="settings" element={

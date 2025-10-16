@@ -4,9 +4,11 @@ const ServiceProviders = {
   // Get all providers for a specific organization
   getAllByOrg: async (orgid) => {
     const [rows] = await db.query(
-      `SELECT sp.*, os.service_name 
+      `SELECT 
+          sp.*, 
+          os.sr_name AS service_name
        FROM service_providers sp
-       LEFT JOIN org_services os ON sp.service_id = os.org_service_id
+       LEFT JOIN org_services os ON sp.org_sid = os.org_sid
        WHERE sp.orgid = ?`,
       [orgid]
     );
@@ -15,29 +17,33 @@ const ServiceProviders = {
 
   // Create new provider
   create: async (data) => {
-    const { orgid, name, email, phone, service_id, experience } = data;
+    const { orgid, sp_name, pic, designation, status, org_sid } = data;
     const [result] = await db.query(
-      "INSERT INTO service_providers (orgid, name, email, phone, service_id, experience) VALUES (?, ?, ?, ?, ?, ?)",
-      [orgid, name, email, phone, service_id, experience]
+      `INSERT INTO service_providers 
+       (sp_name, pic, designation, status, orgid, org_sid) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [sp_name, pic, designation, status, orgid, org_sid]
     );
     return result.insertId;
   },
 
   // Update provider
-  update: async (id, data) => {
-    const { name, email, phone, experience } = data;
+  update: async (sp_id, data) => {
+    const { sp_name, pic, designation, status, org_sid } = data;
     const [result] = await db.query(
-      "UPDATE service_providers SET name=?, email=?, phone=?, experience=? WHERE provider_id=?",
-      [name, email, phone, experience, id]
+      `UPDATE service_providers 
+       SET sp_name=?, pic=?, designation=?, status=?, org_sid=?
+       WHERE sp_id=?`,
+      [sp_name, pic, designation, status, org_sid, sp_id]
     );
     return result.affectedRows;
   },
 
   // Delete provider
-  delete: async (id) => {
+  delete: async (sp_id) => {
     const [result] = await db.query(
-      "DELETE FROM service_providers WHERE provider_id=?",
-      [id]
+      "DELETE FROM service_providers WHERE sp_id=?",
+      [sp_id]
     );
     return result.affectedRows;
   },

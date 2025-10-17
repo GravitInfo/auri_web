@@ -20,7 +20,6 @@ export default function ViewOrganization() {
     fetchData();
   }, [id]);
 
-
   if (!orgData)
     return (
       <p className="p-6 text-gray-500 text-center text-lg">
@@ -116,36 +115,37 @@ export default function ViewOrganization() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {services.map((s) => (
-                  <tr key={s.org_sid} className="hover:bg-gray-50">
-                    <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
-                      {s.sr_name}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
-                      {s.sr_type}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
-                      {s.duration}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
-                      {s.rate}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3">
-                      {s.icon ? (
-                        <img
-                          src={`http://localhost:5000/uploads/icons/${s.icon}`}
-                          alt={s.sr_name}
-                          className="w-6 h-6 mx-auto"
-                          onError={(e) => {
-                            e.target.src = "/placeholder.png";
-                          }}
-                        />
-                      ) : (
-                        <span className="text-gray-400">N/A</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {services.map((s) => {
+                  console.log("Service Icon Path:", s.icon);
+                  return (
+                    <tr key={s.org_sid} className="hover:bg-gray-50">
+                      <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
+                        {s.sr_name}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
+                        {s.sr_type}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
+                        {s.duration}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 text-gray-700 whitespace-nowrap">
+                        {s.rate}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 text-left whitespace-nowrap">
+                        {s.icon ? (
+                          <img
+                            src={`http://localhost:5000/uploads/icons/${s.icon}`}
+                            alt={s.sr_name}
+                            className="w-12 h-12 object-contain rounded-md shadow-sm" // increased size and added slight rounding
+                            onError={(e) => (e.target.src = "/placeholder.png")}
+                          />
+                        ) : (
+                          <span className="text-gray-400">N/A</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

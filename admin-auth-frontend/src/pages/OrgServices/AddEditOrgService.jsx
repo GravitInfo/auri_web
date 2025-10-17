@@ -1,20 +1,17 @@
+// AddEditOrgService.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function AddEditOrgService({ fetchServices, editService, onClose }) {
-  const [orgId, setOrgId] = useState(editService ? editService.orgid : "");
+export default function AddEditOrgService({ fetchServices, editService, onClose, orgId }) {
   const [scId, setScId] = useState(editService ? editService.sc_id : "");
   const [srName, setSrName] = useState(editService ? editService.sr_name : "");
   const [rate, setRate] = useState(editService ? editService.rate : "");
   const [duration, setDuration] = useState(editService ? editService.duration : "");
-  const [organizations, setOrganizations] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  const fetchDropdownData = async () => {
+  // Fetch service categories
+  const fetchCategories = async () => {
     try {
-      const orgRes = await axios.get("http://localhost:5000/api/organization");
-      setOrganizations(orgRes.data);
-
       const catRes = await axios.get("http://localhost:5000/api/service-cat");
       setCategories(catRes.data);
     } catch (error) {
@@ -23,7 +20,7 @@ export default function AddEditOrgService({ fetchServices, editService, onClose 
   };
 
   useEffect(() => {
-    fetchDropdownData();
+    fetchCategories();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -46,24 +43,8 @@ export default function AddEditOrgService({ fetchServices, editService, onClose 
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md w-96">
-      <h2 className="text-xl font-semibold mb-4">
-        {editService ? "Edit Service" : "Add Service"}
-      </h2>
+      <h2 className="text-xl font-semibold mb-4">{editService ? "Edit Service" : "Add Service"}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <select
-          value={orgId}
-          onChange={(e) => setOrgId(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
-          required
-        >
-          <option value="">Select Organization</option>
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
-
         <select
           value={scId}
           onChange={(e) => setScId(e.target.value)}
@@ -72,8 +53,8 @@ export default function AddEditOrgService({ fetchServices, editService, onClose 
         >
           <option value="">Select Category</option>
           {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
+            <option key={cat.sc_id} value={cat.sc_id}>
+              {cat.sr_name}
             </option>
           ))}
         </select>

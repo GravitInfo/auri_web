@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import api, { BASE_URL } from "../../utils/config";
 
 export default function ViewOrganizationPics() {
   const { id } = useParams();
@@ -10,7 +10,7 @@ export default function ViewOrganizationPics() {
 
   const fetchPics = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/organization-pics/org/${id}`);
+      const res = await api.get(`/organization-pics/org/${id}`);
       setPics(res.data);
     } catch (error) {
       console.error("Error fetching pics:", error);
@@ -38,7 +38,7 @@ export default function ViewOrganizationPics() {
           {pics.map((pic) => (
             <img
               key={pic.id}
-              src={`http://localhost:5000/${pic.image_url}`}
+              src={`${BASE_URL}/${pic.image_url}`}
               alt="org"
               className="w-full h-40 object-cover rounded-lg shadow"
             />

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../utils/config"; // ✅ centralized api
 
 export default function AddEditServiceCat({ fetchCategories, editCategory, onClose }) {
   const [name, setName] = useState(editCategory ? editCategory.sr_name : "");
@@ -9,12 +9,12 @@ export default function AddEditServiceCat({ fetchCategories, editCategory, onClo
     e.preventDefault();
     try {
       if (editCategory) {
-        await axios.put(`http://localhost:5000/api/service-cat/${editCategory.sc_id}`, {
+        await api.put(`/service-cat/${editCategory.sc_id}`, {
           sr_name: name,
           sr_s_desc: description,
         });
       } else {
-        await axios.post("http://localhost:5000/api/service-cat", {
+        await api.post("/service-cat", {
           sr_name: name,
           sr_s_desc: description,
         });

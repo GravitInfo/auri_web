@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Plus, Eye, Trash2, Pencil } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/Modal";
 import AddEditOrgService from "./AddEditOrgService";
+import api, { BASE_URL } from "../../utils/config";
 
 export default function OrgServicesList() {
-  const { orgId } = useParams(); // get organization ID from route param
+  const { orgId } = useParams();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -14,14 +14,13 @@ export default function OrgServicesList() {
 
   const navigate = useNavigate();
 
-  // Fetch services for the specific organization
   const fetchServices = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/org-services/org/${orgId}`);
+      const res = await api.get(`/org-services/org/${orgId}`);
       setServices(res.data);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching org services:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -33,7 +32,7 @@ export default function OrgServicesList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this service?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/org-services/${id}`);
+      await api.delete(`/org-services/${id}`);
       fetchServices();
     } catch (error) {
       console.error("Delete error:", error);
@@ -79,7 +78,7 @@ export default function OrgServicesList() {
                 <td className="p-2 border">
                   {srv.icon ? (
                     <img
-                      src={`http://localhost:5000/uploads/icons/${srv.icon}`}
+                      src={`${BASE_URL}/uploads/icons/${srv.icon}`}
                       alt={srv.sr_name_cat}
                       className="w-8 h-8 mx-auto object-contain"
                       onError={(e) => (e.target.src = "/placeholder.png")}
@@ -123,6 +122,7 @@ export default function OrgServicesList() {
             fetchServices={fetchServices}
             editService={editService}
             onClose={() => setShowForm(false)}
+            orgId={orgId}
           />
         </Modal>
       )}

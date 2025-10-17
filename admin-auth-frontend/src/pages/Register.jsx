@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../utils/api";
+import api from "../utils/config";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 

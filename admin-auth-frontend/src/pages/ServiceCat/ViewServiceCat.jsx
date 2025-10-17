@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import api from "../../utils/config"; // ✅ centralized api
 
 export default function ViewServiceCat() {
   const { id } = useParams();
@@ -10,9 +10,7 @@ export default function ViewServiceCat() {
 
   const fetchCategory = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/service-cat/${id}`
-      );
+      const res = await api.get(`/service-cat/${id}`);
       setCategory(res.data);
     } catch (error) {
       console.error("Error fetching category:", error);
@@ -33,25 +31,15 @@ export default function ViewServiceCat() {
       >
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
+
       <h2 className="text-2xl font-bold mb-4">Service Category Details</h2>
 
       <div className="bg-white shadow rounded-lg p-6 space-y-2">
-        <p>
-          <strong>ID:</strong> {category.sc_id}
-        </p>
-        <p>
-          <strong>Name:</strong> {category.sr_name}
-        </p>
-        <p>
-          <strong>Name (Arabic):</strong> {category.sr_name_ar || "-"}
-        </p>
-        <p>
-          <strong>Description:</strong> {category.sr_s_desc || "-"}
-        </p>
-        <p>
-          <strong>Status:</strong> {category.status}
-        </p>
-        
+        <p><strong>ID:</strong> {category.sc_id}</p>
+        <p><strong>Name:</strong> {category.sr_name}</p>
+        <p><strong>Name (Arabic):</strong> {category.sr_name_ar || "-"}</p>
+        <p><strong>Description:</strong> {category.sr_s_desc || "-"}</p>
+        <p><strong>Status:</strong> {category.status}</p>
       </div>
     </div>
   );

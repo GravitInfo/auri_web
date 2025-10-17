@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../utils/config";
 
 export default function AddEditServiceProvider({
   existingProvider,
@@ -10,7 +10,7 @@ export default function AddEditServiceProvider({
     sp_name: existingProvider?.sp_name || "",
     designation: existingProvider?.designation || "",
     status: existingProvider?.status || "active",
-    orgid: existingProvider?.orgid || orgId, // default to orgId from params
+    orgid: existingProvider?.orgid || orgId,
     org_sid: existingProvider?.org_sid || "",
   });
 
@@ -31,21 +31,15 @@ export default function AddEditServiceProvider({
     setLoading(true);
     try {
       const data = new FormData();
-      data.append("sp_name", formData.sp_name);
-      data.append("designation", formData.designation);
-      data.append("status", formData.status);
-      data.append("orgid", formData.orgid);
-      data.append("org_sid", formData.org_sid);
+      Object.keys(formData).forEach((key) => data.append(key, formData[key]));
       if (image) data.append("pic", image);
 
       if (existingProvider) {
-        await axios.put(
-          `http://localhost:5000/api/service-providers/${existingProvider.sp_id}`,
-          data,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
+        await api.put(`/service-providers/${existingProvider.sp_id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       } else {
-        await axios.post(`http://localhost:5000/api/service-providers`, data, {
+        await api.post(`/service-providers`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }

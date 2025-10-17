@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Pencil, Trash2, Eye, Plus } from "lucide-react";
 import Modal from "../../components/Modal";
 import AddEditServiceProvider from "./AddEditServiceProvider";
+import api, { BASE_URL } from "../../utils/config";
 
 export default function ServiceProvidersList() {
-  const { orgId } = useParams(); // dynamic orgId
+  const { orgId } = useParams();
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProvider, setSelectedProvider] = useState(null);
@@ -15,9 +15,7 @@ export default function ServiceProvidersList() {
 
   const fetchProviders = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/service-providers/org/${orgId}`
-      );
+      const res = await api.get(`/service-providers/org/${orgId}`);
       setProviders(res.data);
     } catch (err) {
       console.error("Fetch error:", err);
@@ -33,7 +31,7 @@ export default function ServiceProvidersList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this service provider?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/service-providers/${id}`);
+      await api.delete(`/service-providers/${id}`);
       fetchProviders();
     } catch (err) {
       console.error("Delete error:", err);
@@ -79,7 +77,7 @@ export default function ServiceProvidersList() {
                 <td className="p-2 border">{p.designation}</td>
                 <td className="p-2 border">
                   <img
-                    src={`http://localhost:5000/uploads/${p.pic}`}
+                    src={`${BASE_URL}/uploads/${p.pic}`}
                     alt={p.sp_name}
                     className="h-16 w-16 object-cover rounded"
                   />

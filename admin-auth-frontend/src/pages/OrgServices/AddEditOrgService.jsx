@@ -1,6 +1,5 @@
-// AddEditOrgService.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/config";
 
 export default function AddEditOrgService({ fetchServices, editService, onClose, orgId }) {
   const [scId, setScId] = useState(editService ? editService.sc_id : "");
@@ -9,10 +8,9 @@ export default function AddEditOrgService({ fetchServices, editService, onClose,
   const [duration, setDuration] = useState(editService ? editService.duration : "");
   const [categories, setCategories] = useState([]);
 
-  // Fetch service categories
   const fetchCategories = async () => {
     try {
-      const catRes = await axios.get("http://localhost:5000/api/service-cat");
+      const catRes = await api.get(`/service-cat`);
       setCategories(catRes.data);
     } catch (error) {
       console.error("Dropdown fetch error:", error);
@@ -29,9 +27,9 @@ export default function AddEditOrgService({ fetchServices, editService, onClose,
       const payload = { orgid: orgId, sc_id: scId, sr_name: srName, rate, duration };
 
       if (editService) {
-        await axios.put(`http://localhost:5000/api/org-services/${editService.org_sid}`, payload);
+        await api.put(`/org-services/${editService.org_sid}`, payload);
       } else {
-        await axios.post("http://localhost:5000/api/org-services", payload);
+        await api.post(`/org-services`, payload);
       }
 
       fetchServices();
@@ -43,7 +41,9 @@ export default function AddEditOrgService({ fetchServices, editService, onClose,
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md w-96">
-      <h2 className="text-xl font-semibold mb-4">{editService ? "Edit Service" : "Add Service"}</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        {editService ? "Edit Service" : "Add Service"}
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <select
           value={scId}
@@ -67,7 +67,6 @@ export default function AddEditOrgService({ fetchServices, editService, onClose,
           className="w-full border px-3 py-2 rounded"
           required
         />
-
         <input
           type="number"
           placeholder="Rate"
@@ -75,7 +74,6 @@ export default function AddEditOrgService({ fetchServices, editService, onClose,
           onChange={(e) => setRate(e.target.value)}
           className="w-full border px-3 py-2 rounded"
         />
-
         <input
           type="text"
           placeholder="Duration"

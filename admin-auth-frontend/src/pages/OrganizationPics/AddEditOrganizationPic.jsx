@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api, { BASE_URL } from "../../utils/config";
 
 export default function AddEditOrganizationPic({ fetchPics, editPic, onClose }) {
   const [images, setImages] = useState([]);
@@ -14,12 +14,7 @@ export default function AddEditOrganizationPic({ fetchPics, editPic, onClose }) 
         formData.append("images", images[i]);
       }
 
-      if (editPic) {
-        // 🚨 For simplicity, re-upload new images to replace old
-        await axios.post(`http://localhost:5000/api/organization-pics/upload/${orgId}`, formData);
-      } else {
-        await axios.post(`http://localhost:5000/api/organization-pics/upload/${orgId}`, formData);
-      }
+      await api.post(`/organization-pics/upload/${orgId}`, formData);
 
       fetchPics();
       onClose();

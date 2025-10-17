@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import api, { BASE_URL } from "../../utils/config";
 
 export default function ViewBanner() {
   const { id } = useParams();
@@ -11,7 +11,7 @@ export default function ViewBanner() {
   useEffect(() => {
     const fetchBanner = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/banners/${id}`);
+        const res = await api.get(`/banners/${id}`);
         setBanner(res.data);
       } catch (err) {
         console.error("Error loading banner:", err);
@@ -29,8 +29,6 @@ export default function ViewBanner() {
 
   return (
     <div className="p-6 sm:p-8 bg-gray-50 min-h-screen space-y-6">
-
-      {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-blue-600 hover:underline mb-4 sm:mb-6"
@@ -38,50 +36,30 @@ export default function ViewBanner() {
         <ArrowLeft size={16} /> Back
       </button>
 
-      {/* Banner Info */}
       <div className="bg-white p-5 sm:p-8 rounded-xl shadow-md space-y-3">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center sm:text-left">
-          {banner.bn_name}
-        </h1>
-        <div className="space-y-2 text-sm sm:text-base">
-          <p className="text-gray-700">
-            <span className="font-semibold">Deal:</span> {banner.deal_desc}
-          </p>
-          <p className="text-gray-700 break-words">
-            <span className="font-semibold">Description:</span> {banner.desc}
-          </p>
-          <p className="text-gray-700">
-            <span className="font-semibold">Status:</span> {banner.status}
-          </p>
-          <p className="text-gray-700">
-            <span className="font-semibold">Colours:</span> {banner.colours}
-          </p>
-          <p className="text-gray-700">
-            <span className="font-semibold">Link:</span>{" "}
-            <a
-              href={banner.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {banner.link}
-            </a>
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-800">{banner.bn_name}</h1>
+        <p><strong>Deal:</strong> {banner.deal_desc}</p>
+        <p><strong>Description:</strong> {banner.desc}</p>
+        <p><strong>Status:</strong> {banner.status}</p>
+        <p><strong>Colours:</strong> {banner.colours}</p>
+        <p>
+          <strong>Link:</strong>{" "}
+          <a href={banner.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            {banner.link}
+          </a>
+        </p>
       </div>
 
-      {/* Banner Image */}
       {banner.pic && (
         <div>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Banner Image</h2>
+          <h2 className="text-xl font-semibold mb-3">Banner Image</h2>
           <img
-            src={`http://localhost:5000/uploads/banners/${banner.pic}`}
+            src={`${BASE_URL}/uploads/banners/${banner.pic}`}
             alt={banner.bn_name}
-            className="w-full sm:w-2/3 lg:w-1/2 h-auto object-cover rounded-lg shadow"
+            className="w-full sm:w-2/3 lg:w-1/2 rounded-lg shadow"
           />
         </div>
       )}
-
     </div>
   );
 }

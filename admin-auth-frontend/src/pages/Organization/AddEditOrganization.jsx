@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../utils/api";
+import api from "../../utils/config"; // ✅ updated import
 
 export default function AddEditOrganization({ org, onClose, onSave }) {
   const [form, setForm] = useState(
@@ -14,18 +14,14 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
     }
   );
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (org) {
-        await api.put(`/organization/${org.id}`, form);
-      } else {
-        await api.post("/organization", form);
-      }
+      if (org) await api.put(`/organization/${org.id}`, form);
+      else await api.post("/organization", form);
       onSave();
       onClose();
     } catch (err) {
@@ -34,14 +30,13 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-start pt-24 z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg animate-slide-down transition-all duration-300">
+    <div className="fixed inset-0 flex justify-center items-start pt-24 z-50 bg-opacity-30">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">
             {org ? "Edit Organization" : "Add Organization"}
           </h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            
             {/* Name */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">Name</label>
@@ -54,7 +49,6 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
                 required
               />
             </div>
-
             {/* Email */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">Email</label>
@@ -68,7 +62,6 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
                 required
               />
             </div>
-
             {/* Address */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">Address</label>
@@ -80,7 +73,6 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
                 className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
             {/* City & Pincode */}
             <div className="flex gap-4">
               <div className="flex flex-col flex-1">
@@ -104,7 +96,6 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
                 />
               </div>
             </div>
-
             {/* Country & Phone */}
             <div className="flex gap-4">
               <div className="flex flex-col flex-1">
@@ -128,7 +119,6 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
                 />
               </div>
             </div>
-
             {/* Buttons */}
             <div className="flex justify-end gap-3 mt-4">
               <button
@@ -145,7 +135,6 @@ export default function AddEditOrganization({ org, onClose, onSave }) {
                 Save
               </button>
             </div>
-
           </form>
         </div>
       </div>

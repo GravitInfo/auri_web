@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Plus, Eye, Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import AddEditOrganizationPic from "./AddEditOrganizationPic";
+import api, { BASE_URL } from "../../utils/config";
 
 export default function OrganizationPicsList() {
   const [pics, setPics] = useState([]);
@@ -15,11 +15,12 @@ export default function OrganizationPicsList() {
 
   const fetchPics = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/organization-pics");
+      const res = await api.get("/organization-pics");
       setPics(res.data);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching pics:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,7 +31,7 @@ export default function OrganizationPicsList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this picture?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/organization-pics/${id}`);
+      await api.delete(`/organization-pics/${id}`);
       fetchPics();
     } catch (error) {
       console.error("Delete error:", error);
@@ -70,7 +71,7 @@ export default function OrganizationPicsList() {
                 <td className="p-2 border">{pic.org_pic_id}</td>
                 <td className="p-2 border">
                   <img
-                    src={`http://localhost:5000/${pic.image_url}`}
+                    src={`${BASE_URL}/${pic.image_url}`}
                     alt="pic"
                     className="w-16 h-16 object-cover rounded-md mx-auto"
                   />

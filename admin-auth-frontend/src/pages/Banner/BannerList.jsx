@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import AddEditBanner from "./AddEditBanner";
-import { useNavigate } from "react-router-dom";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import AddEditBanner from "./AddEditBanner";
+import api, { BASE_URL } from "../../utils/config"; // ✅ use api from config.js
 
 export default function BannerList() {
   const [banners, setBanners] = useState([]);
@@ -10,10 +10,10 @@ export default function BannerList() {
   const [editBanner, setEditBanner] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch banners from server
+  // Fetch banners
   const fetchBanners = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/banners");
+      const res = await api.get("/banners");
       setBanners(res.data);
     } catch (err) {
       console.error("Error fetching banners:", err);
@@ -28,7 +28,7 @@ export default function BannerList() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this banner?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/banners/${id}`);
+        await api.delete(`/banners/${id}`);
         fetchBanners();
       } catch (err) {
         console.error("Error deleting banner:", err);
@@ -36,7 +36,7 @@ export default function BannerList() {
     }
   };
 
-  // Open modal for add/edit
+  // Add/Edit
   const handleAddEdit = (banner = null) => {
     setEditBanner(banner);
     setShowModal(true);
@@ -56,91 +56,74 @@ export default function BannerList() {
         </button>
       </div>
 
-      {/* Banner Table */}
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Deal
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Status
-              </th>
-              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">
-                Actions
-              </th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Deal</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Actions</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-gray-200">
-            {banners.length === 0 && (
+            {banners.length === 0 ? (
               <tr>
                 <td colSpan={5} className="py-6 text-center text-gray-500">
                   No banners found.
                 </td>
               </tr>
+            ) : (
+              banners.map((b) => (
+                <tr key={b.bn_id} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 flex items-center gap-2">
+                    {b.pic ? (
+                      <img
+                        src={`${BASE_URL}/uploads/banners/${b.pic}`}
+                        alt={b.bn_name}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
+                        N/A
+                      </div>
+                    )}
+                    <span className="text-gray-800 font-medium">{b.bn_name}</span>
+                  </td>
+
+                  <td className="px-6 py-4 text-gray-600">{b.deal_desc}</td>
+                  <td className="px-6 py-4 text-gray-600">{b.desc}</td>
+                  <td className="px-6 py-4 text-gray-600">{b.status}</td>
+
+                  <td className="px-6 py-4 flex justify-center gap-4">
+                    <button
+                      onClick={() => handleAddEdit(b)}
+                      className="text-blue-600 hover:text-blue-800 transition"
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button
+                      onClick={() => navigate(`/dashboard/banners/view/${b.bn_id}`)}
+                      className="text-green-600 hover:text-green-800 transition"
+                    >
+                      <Eye size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(b.bn_id)}
+                      className="text-red-600 hover:text-red-800 transition"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))
             )}
-
-            {banners.map((b) => (
-              <tr key={b.bn_id} className="hover:bg-gray-50 transition">
-                <td className="px-6 py-4 flex items-center gap-2">
-                  {b.pic ? (
-                    <img
-                      src={`http://localhost:5000/uploads/banners/${b.pic}`}
-                      alt={b.bn_name}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                      N/A
-                    </div>
-                  )}
-                  <span className="text-gray-800 font-medium">{b.bn_name}</span>
-                </td>
-
-                <td className="px-6 py-4 text-gray-600">{b.deal_desc}</td>
-                <td className="px-6 py-4 text-gray-600">{b.desc}</td>
-                <td className="px-6 py-4 text-gray-600">{b.status}</td>
-
-                <td className="px-6 py-4 flex justify-center gap-4">
-                  {/* Edit */}
-                  <button
-                    onClick={() => handleAddEdit(b)}
-                    className="text-blue-600 hover:text-blue-800 transition"
-                  >
-                    <Pencil size={18} />
-                  </button>
-
-                  {/* View */}
-                  <button
-                    onClick={() => navigate(`/dashboard/banners/view/${b.bn_id}`)}
-                    className="text-green-600 hover:text-green-800 transition"
-                  >
-                    <Eye size={18} />
-                  </button>
-
-                  {/* Delete */}
-                  <button
-                    onClick={() => handleDelete(b.bn_id)}
-                    className="text-red-600 hover:text-red-800 transition"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Add/Edit Banner Modal */}
       {showModal && (
         <AddEditBanner
           banner={editBanner}

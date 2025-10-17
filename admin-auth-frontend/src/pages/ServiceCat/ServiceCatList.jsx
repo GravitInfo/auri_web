@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Plus, Eye, Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AddEditServiceCat from "./AddEditServiceCat";
+import api, { BASE_URL } from "../../utils/config"; // ✅ use centralized api
 
 export default function ServiceCatList() {
   const [categories, setCategories] = useState([]);
@@ -13,7 +13,7 @@ export default function ServiceCatList() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/service-cat");
+      const res = await api.get("/service-cat");
       setCategories(res.data);
       setLoading(false);
     } catch (error) {
@@ -28,7 +28,7 @@ export default function ServiceCatList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/service-cat/${id}`);
+      await api.delete(`/service-cat/${id}`);
       fetchCategories();
     } catch (error) {
       console.error("Delete error:", error);
@@ -75,7 +75,10 @@ export default function ServiceCatList() {
                   <td className="px-6 py-4 text-gray-600">{cat.sr_s_desc}</td>
                   <td className="px-6 py-4 flex justify-center gap-3">
                     <button
-                      onClick={() => { setEditCategory(cat); setShowForm(true); }}
+                      onClick={() => {
+                        setEditCategory(cat);
+                        setShowForm(true);
+                      }}
                       className="text-blue-600 hover:text-blue-800 transition"
                     >
                       <Pencil size={18} />

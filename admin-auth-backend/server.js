@@ -20,10 +20,12 @@ app.use(express.json()); // parse JSON
 app.use(express.urlencoded({ extended: true })); // parse form data
 
 // ✅ Serve static folders
-app.use("/uploads/orgs", express.static(path.join(__dirname, "uploads/orgs")));
+ app.use("/uploads/orgs", express.static(path.join(__dirname, "uploads/orgs")));
 app.use("/uploads/icons", express.static(path.join(__dirname, "uploads/icons")));
 app.use("/uploads/providers", express.static(path.join(__dirname, "uploads/providers")));
 app.use('/uploads/banners', express.static(path.join(__dirname, 'uploads/banners')));
+
+
 
 // ===== Routes =====
 app.use("/api/admin", adminRoutes);
@@ -47,7 +49,7 @@ app.use((req, res) => {
 
 // ===== Global error handler =====
 app.use((err, req, res, next) => {
-  console.error("❌ Global Error:", err);
+  console.error(" Global Error:", err);
   res.status(500).json({ message: "Server error", details: err.message });
 });
 

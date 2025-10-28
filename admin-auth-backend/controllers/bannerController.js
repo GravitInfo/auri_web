@@ -1,4 +1,4 @@
-const Banner = require('../models/bannerModel');
+const Banner = require("../models/bannerModel");
 
 exports.getAllBanners = async (req, res) => {
   try {
@@ -12,7 +12,8 @@ exports.getAllBanners = async (req, res) => {
 exports.getBannerById = async (req, res) => {
   try {
     const [rows] = await Banner.getById(req.params.id);
-    if (rows.length === 0) return res.status(404).json({ message: 'Banner not found' });
+    if (rows.length === 0)
+      return res.status(404).json({ message: "Banner not found" });
     res.json(rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -29,7 +30,7 @@ exports.createBanner = async (req, res) => {
     if (req.file) data.pic = req.file.filename;
 
     const [result] = await Banner.create(data);
-    res.status(201).json({ message: 'Banner created', id: result.insertId });
+    res.status(201).json({ message: "Banner created", id: result.insertId });
   } catch (err) {
     //console.error("❌ Error in createBanner:", err);
     res.status(500).json({ error: err.message });
@@ -39,11 +40,23 @@ exports.createBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
   try {
     const data = req.body;
-    if (req.file) data.pic = req.file.filename;
+
+    // ✅ If new file uploaded, replace old image
+    if (req.file) {
+      data.pic = req.file.filename;
+    } else {
+      // ✅ Keep old image if not replaced
+      data.pic = req.body.oldPic;
+    }
+
     const [result] = await Banner.update(req.params.id, data);
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Banner not found' });
-    res.json({ message: 'Banner updated' });
+
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Banner not found" });
+
+    res.json({ message: "Banner updated" });
   } catch (err) {
+    console.error("updateBanner error:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -51,8 +64,9 @@ exports.updateBanner = async (req, res) => {
 exports.deleteBanner = async (req, res) => {
   try {
     const [result] = await Banner.delete(req.params.id);
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Banner not found' });
-    res.json({ message: 'Banner deleted' });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Banner not found" });
+    res.json({ message: "Banner deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AddEditBanner from "./AddEditBanner";
-import api, { BASE_URL } from "../../utils/config"; // ✅ use api from config.js
+import api, { BASE_URL } from "../../utils/config";
 
 export default function BannerList() {
   const [banners, setBanners] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editBanner, setEditBanner] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch banners
+  // ✅ Fetch all banners
   const fetchBanners = async () => {
     try {
       const res = await api.get("/banners");
       setBanners(res.data);
+      setLoading(false);
     } catch (err) {
       console.error("Error fetching banners:", err);
+      setLoading(false);
     }
   };
 
@@ -24,113 +27,184 @@ export default function BannerList() {
     fetchBanners();
   }, []);
 
-  // Delete banner
+  // ✅ Delete banner
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this banner?")) {
-      try {
-        await api.delete(`/banners/${id}`);
-        fetchBanners();
-      } catch (err) {
-        console.error("Error deleting banner:", err);
-      }
+    if (!window.confirm("Are you sure you want to delete this banner?")) return;
+    try {
+      await api.delete(`/banners/${id}`);
+      fetchBanners();
+    } catch (err) {
+      console.error("Error deleting banner:", err);
+      alert("Failed to delete banner. Try again.");
     }
   };
 
-  // Add/Edit
+  // ✅ Open modal for Add/Edit
   const handleAddEdit = (banner = null) => {
     setEditBanner(banner);
     setShowModal(true);
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h1 className="text-3xl font-extrabold text-gray-800 mb-4 md:mb-0">
+    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#003366]">
           Banners
         </h1>
         <button
           onClick={() => handleAddEdit(null)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+          className="flex items-center gap-2 bg-gradient-to-r from-[#4f7be2] to-[#3d64c1] text-white px-4 py-2.5 rounded-lg hover:shadow-lg transition-all"
         >
-          <Plus size={16} /> Add Banner
+          <Plus size={18} /> Add Banner
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Deal</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-gray-200">
-            {banners.length === 0 ? (
+      {/* Table */}
+      <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+        {loading ? (
+          <p className="text-gray-500 text-center py-6">Loading...</p>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
+            <thead className="bg-[#e6f5f3] text-[#155e54]">
               <tr>
-                <td colSpan={5} className="py-6 text-center text-gray-500">
-                  No banners found.
-                </td>
+                <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
+                  Banner
+                </th>
+                <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
+                  Deal
+                </th>
+                <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide">
+                  Actions
+                </th>
               </tr>
-            ) : (
-              banners.map((b) => (
-                <tr key={b.bn_id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 flex items-center gap-2">
-                    {b.pic ? (
-                      <img
-                        src={`${BASE_URL}/uploads/banners/${b.pic}`}
-                        alt={b.bn_name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                        N/A
-                      </div>
-                    )}
-                    <span className="text-gray-800 font-medium">{b.bn_name}</span>
-                  </td>
+            </thead>
 
-                  <td className="px-6 py-4 text-gray-600">{b.deal_desc}</td>
-                  <td className="px-6 py-4 text-gray-600">{b.desc}</td>
-                  <td className="px-6 py-4 text-gray-600">{b.status}</td>
+            <tbody className="bg-white divide-y divide-gray-100">
+              {banners.length > 0 ? (
+                banners.map((b) => (
+                  <tr
+                    key={b.bn_id}
+                    className="hover:bg-gray-50 transition-all duration-200"
+                  >
+                    {/* Banner Image + Name */}
+                    <td className="px-6 py-4 flex items-center gap-3">
+                      {b.pic ? (
+                        <img
+                          src={`${BASE_URL}/uploads/banners/${b.pic}`}
+                          alt={b.bn_name}
+                          className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                          onError={(e) => (e.target.src = "/placeholder.png")}
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                          N/A
+                        </div>
+                      )}
+                      <span className="font-medium text-gray-800">
+                        {b.bn_name}
+                      </span>
+                    </td>
 
-                  <td className="px-6 py-4 flex justify-center gap-4">
-                    <button
-                      onClick={() => handleAddEdit(b)}
-                      className="text-blue-600 hover:text-blue-800 transition"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => navigate(`/dashboard/banners/view/${b.bn_id}`)}
-                      className="text-green-600 hover:text-green-800 transition"
-                    >
-                      <Eye size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(b.bn_id)}
-                      className="text-red-600 hover:text-red-800 transition"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    {/* Deal */}
+                    <td className="px-6 py-4 text-gray-700">{b.deal_desc}</td>
+
+                    {/* Description */}
+                    <td className="px-6 py-4 text-gray-700 max-w-xs truncate">
+                      {b.desc}
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          b.status === "active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {b.status}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-6 py-4 flex justify-center gap-2">
+                      <button
+                        onClick={() => handleAddEdit(b)}
+                        className="text-blue-600 hover:text-blue-800 transition"
+                        title="Edit"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <span className="text-gray-400">|</span>
+                      <button
+                        onClick={() =>
+                          navigate(`/dashboard/banners/view/${b.bn_id}`)
+                        }
+                        className="text-green-600 hover:text-green-700 transition"
+                        title="View"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      <span className="text-gray-400">|</span>
+                      <button
+                        onClick={() => handleDelete(b.bn_id)}
+                        className="text-red-600 hover:text-red-700 transition"
+                        title="Delete"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-8 text-center text-gray-500 italic"
+                  >
+                    No banners found.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
+      {/* Modal */}
       {showModal && (
-        <AddEditBanner
-          banner={editBanner}
-          onClose={() => setShowModal(false)}
-          onSave={fetchBanners}
-        />
+        <ModalWrapper onClose={() => setShowModal(false)}>
+          <AddEditBanner
+            banner={editBanner}
+            onClose={() => setShowModal(false)}
+            onSave={fetchBanners}
+          />
+        </ModalWrapper>
       )}
+    </div>
+  );
+}
+
+// ✅ Reusable Modal Wrapper (same as in other pages)
+function ModalWrapper({ children, onClose }) {
+  return (
+    <div
+      className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white p-6 rounded-2xl shadow-lg w-[90%] sm:w-[480px] max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
     </div>
   );
 }

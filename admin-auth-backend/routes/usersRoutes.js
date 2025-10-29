@@ -2,16 +2,14 @@ const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/usersController");
 
-// Registration
-router.post("/register", usersController.registerUser);
-
 // Send OTP
 router.post("/send-otp", usersController.sendOtp);
 
-// Verify OTP
+// Verify OTP (register/login automatically)
 router.post("/verify-otp", usersController.verifyOtp);
 
-// Login
+// Optional manual register/login
+router.post("/register", usersController.registerUser);
 router.post("/login", usersController.loginUser);
 
 module.exports = router;

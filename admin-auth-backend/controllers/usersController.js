@@ -1,48 +1,84 @@
 const Users = require("../models/usersModel");
+// const sendEmail = require("../utils/sendEmail"); // abhi email service use nahi karni
 
-// Temporary in-memory OTP store
-const otpStore = {};  // { email: { otp: 123456, expires: Date } }
+// Temporary OTP storage (in-memory)
+const otpStore = {}; // { email: { otp, expires } }
 
 // Generate random 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
 
-// Send OTP
-const sendOtp = (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: "Email is required" });
+// ✅ Send OTP to user's email (console only)
+const sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
-  const otp = generateOTP();
-  const expires = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
-  otpStore[email] = { otp, expires };
+    // Generate and store OTP
+    const otp = generateOTP();
+    const expires = Date.now() + 5 * 60 * 1000; // valid for 5 minutes
+    otpStore[email] = { otp, expires };
 
-  console.log(`OTP for ${email} is ${otp}`); // For testing; replace with email service
+    // ✅ For testing: show OTP in console only
+    console.log(`✅ OTP for ${email}: ${otp}`);
 
-  res.json({ message: "OTP sent to email" });
-};
+    // ❌ Skip sending email (testing mode)
+    // await sendEmail(email, "Your OTP Code", `Your OTP for login is ${otp}`);
 
-// Verify OTP
-const verifyOtp = (req, res) => {
-  const { email, otp } = req.body;
-  if (!otpStore[email]) return res.status(400).json({ message: "No OTP sent" });
-
-  const { otp: storedOtp, expires } = otpStore[email];
-  if (Date.now() > expires) {
-    delete otpStore[email];
-    return res.status(400).json({ message: "OTP expired" });
+    res.json({ message: "OTP generated successfully (check console)" });
+  } catch (err) {
+    console.error("Error in sendOtp:", err);
+    res.status(500).json({ message: "Failed to generate OTP" });
   }
-
-  if (parseInt(otp) !== storedOtp)
-    return res.status(400).json({ message: "Invalid OTP" });
-
-  delete otpStore[email];
-  res.json({ message: "OTP verified successfully" });
 };
 
-// Register new user
+// ✅ Verify OTP and login/register user
+const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!otpStore[email]) return res.status(400).json({ message: "No OTP sent" });
+
+    const { otp: storedOtp, expires } = otpStore[email];
+
+    if (Date.now() > expires) {
+      delete otpStore[email];
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    if (parseInt(otp) !== storedOtp)
+      return res.status(400).json({ message: "Invalid OTP" });
+
+    delete otpStore[email];
+
+    // ✅ Check if user exists, otherwise create new one
+    let user = await Users.findByEmail(email);
+    if (!user) {
+      const newUserId = await Users.create({
+        user_email: email,
+        u_name: "New User",
+        u_mobile: null,
+        profile_pic: null,
+        address: null,
+        city: null,
+        zip: null,
+      });
+      user = await Users.findByEmail(email);
+      console.log("🆕 New user registered:", newUserId);
+    }
+
+    res.json({
+      message: "OTP verified successfully",
+      user,
+    });
+  } catch (err) {
+    console.error("Error in verifyOtp:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ✅ Manual user registration (optional)
 const registerUser = async (req, res) => {
   try {
     const { user_email, u_name, u_mobile, profile_pic, address, city, zip } = req.body;
-
     const existingUser = await Users.findByEmail(user_email);
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
@@ -59,12 +95,12 @@ const registerUser = async (req, res) => {
 
     res.json({ message: "User registered successfully", userId });
   } catch (err) {
-    console.error(err);
+    console.error("Error in registerUser:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Login user by email
+// ✅ Manual login (email only)
 const loginUser = async (req, res) => {
   try {
     const { user_email } = req.body;
@@ -75,7 +111,7 @@ const loginUser = async (req, res) => {
 
     res.json({ message: "Login successful", user });
   } catch (err) {
-    console.error(err);
+    console.error("Error in loginUser:", err);
     res.status(500).json({ message: "Server error" });
   }
 };

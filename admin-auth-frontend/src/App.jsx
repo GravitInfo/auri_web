@@ -4,11 +4,25 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OrgProtectedRoute from "./components/OrgProtectedRoute";
+import OrganizationLogin from "./pages/orgLogin/OrganizationLogin";
+import OrganizationDashboard from "./pages/orgLogin/OrganizationDashboard";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Organization Routes */}
+        <Route path="/organization/login" element={<OrganizationLogin />} />
+        <Route
+          path="/organization/dashboard"
+          element={
+            <OrgProtectedRoute>
+              <OrganizationDashboard />
+            </OrgProtectedRoute>
+          }
+        />
+        {/* admin login */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 

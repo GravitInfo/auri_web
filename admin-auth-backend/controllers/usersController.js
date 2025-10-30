@@ -1,10 +1,7 @@
 const Users = require("../models/usersModel");
-// const sendEmail = require("../utils/sendEmail"); // abhi email service use nahi karni
+const sendEmail = require("../utils/sendEmail");
 
-// Temporary OTP storage (in-memory)
-const otpStore = {}; // { email: { otp, expires } }
-
-// Generate random 6-digit OTP
+const otpStore = {};
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
 
 // ✅ Send OTP to user's email (console only)
@@ -18,16 +15,14 @@ const sendOtp = async (req, res) => {
     const expires = Date.now() + 5 * 60 * 1000; // valid for 5 minutes
     otpStore[email] = { otp, expires };
 
-    // ✅ For testing: show OTP in console only
-    console.log(`✅ OTP for ${email}: ${otp}`);
+    // ✅ Send OTP email (this line actually sends the mail)
+    await sendEmail(email, "Your OTP Code", `Your OTP for login is ${otp}`);
 
-    // ❌ Skip sending email (testing mode)
-    // await sendEmail(email, "Your OTP Code", `Your OTP for login is ${otp}`);
-
-    res.json({ message: "OTP generated successfully (check console)" });
+    // ✅ Success message
+    res.json({ message: "OTP sent to your email successfully" });
   } catch (err) {
-    console.error("Error in sendOtp:", err);
-    res.status(500).json({ message: "Failed to generate OTP" });
+    console.error("❌ Error in sendOtp:", err);
+    res.status(500).json({ message: "Failed to send OTP" });
   }
 };
 

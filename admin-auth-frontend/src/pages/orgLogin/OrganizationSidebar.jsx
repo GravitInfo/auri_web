@@ -1,11 +1,4 @@
-import {
-  Home,
-  Users,
-  Settings,
-  LogOut,
-  Layers,
-  Briefcase,
-} from "lucide-react";
+import { Home, Users, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -14,6 +7,7 @@ export default function OrganizationSidebar({ onLogout }) {
   const location = useLocation();
   const [active, setActive] = useState("Dashboard");
 
+  // Update active menu based on URL
   useEffect(() => {
     if (location.pathname.startsWith("/organization/members")) {
       setActive("Members");
@@ -21,6 +15,8 @@ export default function OrganizationSidebar({ onLogout }) {
       setActive("Services");
     } else if (location.pathname.startsWith("/organization/settings")) {
       setActive("Settings");
+    } else if (location.pathname.startsWith("/organization/menu")) {
+      setActive("Profile");
     } else if (location.pathname.startsWith("/organization/dashboard")) {
       setActive("Dashboard");
     }
@@ -28,6 +24,7 @@ export default function OrganizationSidebar({ onLogout }) {
 
   const menuItems = [
     { name: "Dashboard", path: "/organization/dashboard", icon: <Home className="w-5 h-5" /> },
+    { name: "Profile", path: "/organization/menu", icon: <Users className="w-5 h-5" /> }
   ];
 
   const handleMenuClick = (item) => {
@@ -40,12 +37,8 @@ export default function OrganizationSidebar({ onLogout }) {
       
       {/* Logo Section */}
       <div className="p-5 border-b border-[#d7e0f5] bg-gradient-to-r from-[#c9d8ff] to-[#e3ecff] text-center shadow-sm">
-        <h1 className="text-2xl font-bold text-[#1b3a7a] tracking-wide">
-          ORG PANEL
-        </h1>
-        <p className="text-sm text-[#5572b5] font-medium mt-1">
-          Manage Your Organization ⚙️
-        </p>
+        <h1 className="text-2xl font-bold text-[#1b3a7a] tracking-wide">AURI PANEL</h1>
+        <p className="text-sm text-[#5572b5] font-medium mt-1">Manage Your Organization ⚙️</p>
       </div>
 
       {/* Menu */}

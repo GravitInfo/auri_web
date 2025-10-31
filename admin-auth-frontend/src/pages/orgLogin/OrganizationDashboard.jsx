@@ -30,7 +30,7 @@ export default function OrganizationDashboard() {
     <div className="flex min-h-screen bg-[#f5f8ff]">
       <OrganizationSidebar onLogout={handleLogout} />
 
-      <div className="flex-1 ml-64 p-10 transition-all duration-300">
+      <div className="flex-1  p-10 transition-all duration-300">
         {/* Header */}
         <div className="flex items-center justify-between bg-gradient-to-r from-[#c9d8ff] to-[#e3ecff] p-6 rounded-2xl shadow-md mb-8 border border-[#d7e0f5]">
           <h1 className="text-3xl font-bold text-[#1b3a7a]">

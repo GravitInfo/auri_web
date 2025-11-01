@@ -7,7 +7,7 @@ const Organization = {
       const [rows] = await db.query("SELECT * FROM organization");
       return rows;
     } catch (err) {
-      console.error("❌ getAll() DB error:", err);
+      console.error(" getAll() DB error:", err);
       throw err;
     }
   },

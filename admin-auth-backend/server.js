@@ -14,6 +14,9 @@ const serviceProvidersRoutes = require("./routes/serviceProvidersRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const bannerRoutes = require("./routes/bannerRoutes");
 const organizationLoginRoutes = require("./routes/organizationLoginRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const bookingMasterRoutes = require("./routes/bookingMasterRoutes");
+const bookingDetailsRoutes = require("./routes/bookingDetailsRoutes");
 
 const app = express();
 
@@ -38,6 +41,9 @@ app.use("/api/service-providers", serviceProvidersRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/auth/organization", organizationLoginRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/booking-master", bookingMasterRoutes);
+app.use("/api/booking-details", bookingDetailsRoutes);
 
 // ===== Root route =====
 app.get("/", (req, res) => {

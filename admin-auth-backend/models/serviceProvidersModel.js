@@ -27,28 +27,6 @@ const ServiceProviders = {
     return result.insertId;
   },
 
-  // Update provider
-//   update: async (sp_id, data) => {
-//     const { sp_name, pic, designation, status, org_sid } = data;
-//     const [result] = await db.query(
-//       `UPDATE service_providers 
-//        SET sp_name=?, pic=?, designation=?, status=?, org_sid=?
-//        WHERE sp_id=?`,
-//       [sp_name, pic, designation, status, org_sid, sp_id]
-//     );
-//     return result.affectedRows;
-//   },
-
-//   // Delete provider
-//   delete: async (sp_id) => {
-//     const [result] = await db.query(
-//       "DELETE FROM service_providers WHERE sp_id=?",
-//       [sp_id]
-//     );
-//     return result.affectedRows;
-//   },
-// };
-
 // module.exports = ServiceProviders;
 // ✅ Update
   update: async (sp_id, data) => {

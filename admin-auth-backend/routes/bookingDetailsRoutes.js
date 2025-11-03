@@ -2,10 +2,17 @@ const express = require("express");
 const router = express.Router();
 const bookingDetailsController = require("../controllers/bookingDetailsController");
 
-router.get("/", bookingDetailsController.getAllBookingDetails);        // GET all
-router.get("/:id", bookingDetailsController.getBookingDetailById);    // GET one by ID
-router.get("/by-booking/:booking_id", bookingDetailsController.getByBookingId); // GET all by booking_id
-router.post("/", bookingDetailsController.addBookingDetail);          // POST create
-router.delete("/:id", bookingDetailsController.deleteBookingDetail);  // DELETE one
+router.get("/", bookingDetailsController.getAllBookingDetails);
+router.get("/by-booking/:booking_id", bookingDetailsController.getByBookingId);
+
+// ✅ Must come BEFORE /:id
+router.get("/org/:orgId", bookingDetailsController.getBookingsByOrganization);
+
+// Dynamic route at the end
+router.get("/:id", bookingDetailsController.getBookingDetailsById);
+
+router.post("/", bookingDetailsController.addBookingDetail);
+router.delete("/:id", bookingDetailsController.deleteBookingDetail);
 
 module.exports = router;
+

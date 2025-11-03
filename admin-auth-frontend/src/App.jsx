@@ -1,3 +1,4 @@
+// src/App.jsx
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -13,6 +14,8 @@ import OrganizationDashboard from "./pages/orgLogin/OrganizationDashboard";
 import OrganizationMenu from "./pages/orgLogin/OrganizationMenu";
 import OrganizationLayout from "./pages/orgLogin/OrganizationLayout";
 import OrgProtectedRoute from "./components/OrgProtectedRoute";
+import OrganizationBookings from "./pages/orgLogin/Bookings/OrganizationBookings"; // default import
+import OrganizationViewBookings from "./pages/orgLogin/Bookings/OrganizationViewBookings";
 
 function App() {
   return (
@@ -44,7 +47,9 @@ function App() {
         >
           {/* Nested routes inside OrganizationLayout */}
           <Route path="dashboard" element={<OrganizationDashboard />} />
-          <Route path="menu" element={<OrganizationMenu />} />
+          <Route path="profile" element={<OrganizationMenu />} />
+          <Route path="bookings" element={<OrganizationBookings />} />
+          <Route path="bookings/:id" element={<OrganizationViewBookings />} />
           {/* Add more organization pages here */}
         </Route>
 

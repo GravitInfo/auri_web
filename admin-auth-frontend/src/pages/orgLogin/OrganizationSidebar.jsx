@@ -1,4 +1,4 @@
-import { Home, Users, LogOut } from "lucide-react";
+import { Home, Users, LogOut, CalendarCheck  } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -9,13 +9,9 @@ export default function OrganizationSidebar({ onLogout }) {
 
   // Update active menu based on URL
   useEffect(() => {
-    if (location.pathname.startsWith("/organization/members")) {
-      setActive("Members");
-    } else if (location.pathname.startsWith("/organization/services")) {
-      setActive("Services");
-    } else if (location.pathname.startsWith("/organization/settings")) {
-      setActive("Settings");
-    } else if (location.pathname.startsWith("/organization/menu")) {
+    if (location.pathname.startsWith("/organization/bookings")) {
+      setActive("Bookings");
+    } else if (location.pathname.startsWith("/organization/profile")) {
       setActive("Profile");
     } else if (location.pathname.startsWith("/organization/dashboard")) {
       setActive("Dashboard");
@@ -24,7 +20,8 @@ export default function OrganizationSidebar({ onLogout }) {
 
   const menuItems = [
     { name: "Dashboard", path: "/organization/dashboard", icon: <Home className="w-5 h-5" /> },
-    { name: "Profile", path: "/organization/menu", icon: <Users className="w-5 h-5" /> }
+    { name: "Profile", path: "/organization/profile", icon: <Users className="w-5 h-5" /> },
+    { name: "Bookings", path: "/organization/Bookings", icon: <CalendarCheck  className="w-5 h-5" /> }
   ];
 
   const handleMenuClick = (item) => {

@@ -32,6 +32,9 @@ import BannerList from "./Banner/BannerList";
 import AddEditBanner from "./Banner/AddEditBanner";
 import ViewBanner from "./Banner/ViewBanner";
 
+import  Bookings  from "./Bookings/Bookings";
+import  ViewBookings  from "./Bookings/ViewBookings";
+
 // ---------------------- Dashboard Overview ----------------------
 const DashboardOverview = () => {
   const stats = [
@@ -195,17 +198,9 @@ export default function Dashboard() {
           <Route path="banners/view/:id" element={<ViewBanner />} />
 
           {/* Settings */}
-          <Route
-            path="settings"
-            element={
-              <div className="p-8 bg-white rounded-2xl shadow-md border border-[#e2ebff]">
-                <h1 className="text-3xl font-bold text-[#102a61]">⚙️ Settings</h1>
-                <p className="mt-4 text-gray-600">
-                  Configure application preferences, account, and system behavior here.
-                </p>
-              </div>
-            }
-          />
+          <Route path="bookings" element={ <Bookings/> } />
+          <Route path="bookings/:id" element={ <ViewBookings/> } />
+
         </Routes>
       </div>
     </div>

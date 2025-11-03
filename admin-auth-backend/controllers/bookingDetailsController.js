@@ -1,6 +1,6 @@
 const BookingDetails = require("../models/bookingDetailsModel");
 
-// ✅ Get all
+// ✅ Get all booking details
 exports.getAllBookingDetails = async (req, res) => {
   try {
     const details = await BookingDetails.getAll();
@@ -11,29 +11,49 @@ exports.getAllBookingDetails = async (req, res) => {
   }
 };
 
-// ✅ Get by ID
-exports.getBookingDetailById = async (req, res) => {
+// ✅ Get booking detail by booking_dt_id
+exports.getBookingDetailsById = async (req, res) => {
   try {
     const { id } = req.params;
-    const detail = await BookingDetails.getById(id);
+    const rows = await BookingDetails.getById(id);
 
-    if (!detail) return res.status(404).json({ error: "Booking detail not found" });
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
 
-    res.json(detail);
+    res.json(rows);
   } catch (err) {
-    console.error("❌ Error fetching booking detail:", err);
+    console.error("❌ Error fetching booking details:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// ✅ Get all details by booking_id
+// ✅ Get all booking details by booking_id
 exports.getByBookingId = async (req, res) => {
   try {
     const { booking_id } = req.params;
     const details = await BookingDetails.getByBookingId(booking_id);
+
+    if (!details || details.length === 0) {
+      return res.status(404).json({ message: "No booking details found for this booking_id" });
+    }
+
     res.json(details);
   } catch (err) {
     console.error("❌ Error fetching booking details by booking_id:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// ✅ Get bookings by organization ID
+exports.getBookingsByOrganization = async (req, res) => {
+  try {
+    const { orgId } = req.params;
+    const details = await BookingDetails.getByOrganization(orgId);
+
+    res.json(details);
+  } catch (err) {
+    console.error("❌ Error fetching bookings for organization:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -65,8 +85,9 @@ exports.deleteBookingDetail = async (req, res) => {
     const { id } = req.params;
     const result = await BookingDetails.delete(id);
 
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Booking detail not found" });
+    }
 
     res.json({ message: "Booking detail deleted successfully" });
   } catch (err) {

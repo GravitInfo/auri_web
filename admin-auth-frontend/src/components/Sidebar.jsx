@@ -2,7 +2,7 @@ import {
   Home,
   Users,
   Settings,
-  LogOut,
+  LogOut, CalendarCheck ,
   Image as BannerIcon,
   Layers,
 } from "lucide-react";
@@ -21,8 +21,8 @@ export default function Sidebar({ onLogout }) {
       setActive("Service Categories");
     } else if (location.pathname.startsWith("/dashboard/banners")) {
       setActive("Banner");
-    } else if (location.pathname.startsWith("/dashboard/settings")) {
-      setActive("Settings");
+    } else if (location.pathname.startsWith("/dashboard/bookings")) {
+      setActive("Bookings");
     } else if (location.pathname === "/dashboard") {
       setActive("Dashboard");
     }
@@ -33,7 +33,7 @@ export default function Sidebar({ onLogout }) {
     { name: "Organizations", path: "/dashboard/organization", icon: <Users className="w-5 h-5" /> },
     { name: "Service Categories", path: "/dashboard/serviceCat", icon: <Layers className="w-5 h-5" /> },
     { name: "Banner", path: "/dashboard/banners", icon: <BannerIcon className="w-5 h-5" /> },
-    { name: "Settings", path: "/dashboard/settings", icon: <Settings className="w-5 h-5" /> },
+    { name: "Bookings", path: "/dashboard/bookings", icon: <CalendarCheck  className="w-5 h-5" /> },
   ];
 
   const handleMenuClick = (item) => {

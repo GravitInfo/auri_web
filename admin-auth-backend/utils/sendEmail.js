@@ -25,7 +25,9 @@ const sendEmail = async (to, subject, text) => {
     console.error("❌ Email sending failed:", err);
     throw err; // rethrow to let controller catch it
   }
+
 };
+
 
 module.exports = sendEmail;
 

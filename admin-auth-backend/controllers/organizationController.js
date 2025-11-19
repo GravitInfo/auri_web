@@ -2,10 +2,10 @@ const bcrypt = require("bcrypt");
 const Organization = require("../models/organizationModel");
 
 const OrganizationController = {
-  // 🔹 Get all organizations
+  // 🔹 Get all organizations with avg rating and review count
   getAll: async (req, res) => {
     try {
-      const data = await Organization.getAll();
+      const data = await Organization.getAllWithReviews(); // ✅ use the method with LEFT JOIN
       res.json(data);
     } catch (err) {
       console.error("❌ getAll error:", err);
@@ -13,7 +13,7 @@ const OrganizationController = {
     }
   },
 
-  // 🔹 Get single organization (with pics, services, providers)
+  // 🔹 Get single organization by ID (with pics, services, providers, reviews)
   getById: async (req, res) => {
     try {
       const id = req.params.id;
@@ -23,46 +23,50 @@ const OrganizationController = {
         return res.status(404).json({ message: "Organization not found" });
       }
 
-      res.json(data);
+      res.json(data); // ✅ now includes formatted reviews + avg_rating + review_count
     } catch (err) {
       console.error("❌ getById error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },
 
-  // 🔹 Create organization (hash password before saving)
+  // 🔹 Create organization
   create: async (req, res) => {
     try {
       const orgData = { ...req.body };
 
-      // ✅ Hash password before inserting
+      if (req.file) orgData.image = "uploads/organization/" + req.file.filename;
+
       if (orgData.password) {
         const saltRounds = 10;
         orgData.password = await bcrypt.hash(orgData.password, saltRounds);
       }
 
       const id = await Organization.create(orgData);
-      res
-        .status(201)
-        .json({ message: "Organization created successfully", id });
+      const newOrg = await Organization.getById(id);
+
+      res.status(201).json({
+        message: "Organization created successfully",
+        organization: newOrg,
+      });
     } catch (err) {
       console.error("❌ create error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },
 
-  // 🔹 Update organization (only hash password if updated)
+  // 🔹 Update organization
   update: async (req, res) => {
     try {
       const id = req.params.id;
       const orgData = { ...req.body };
 
-      // ✅ Only hash password if it is a new one
+      if (req.file) orgData.image = "uploads/organization/" + req.file.filename;
+
       if (orgData.password && orgData.password.trim() !== "") {
         const saltRounds = 10;
         orgData.password = await bcrypt.hash(orgData.password, saltRounds);
       } else {
-        // remove password if it's not provided to avoid overwriting
         delete orgData.password;
       }
 
@@ -83,9 +87,8 @@ const OrganizationController = {
   delete: async (req, res) => {
     try {
       const affected = await Organization.delete(req.params.id);
-      if (!affected) {
-        return res.status(404).json({ message: "Organization not found" });
-      }
+      if (!affected) return res.status(404).json({ message: "Organization not found" });
+
       res.json({ message: "Organization deleted successfully" });
     } catch (err) {
       console.error("❌ delete error:", err);
@@ -95,4 +98,3 @@ const OrganizationController = {
 };
 
 module.exports = OrganizationController;
-

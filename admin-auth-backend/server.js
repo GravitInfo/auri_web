@@ -17,6 +17,7 @@ const organizationLoginRoutes = require("./routes/organizationLoginRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const bookingMasterRoutes = require("./routes/bookingMasterRoutes");
 const bookingDetailsRoutes = require("./routes/bookingDetailsRoutes");
+const reviewsRoutes = require("./routes/reviewsRoutes.js");
 
 const app = express();
 
@@ -30,6 +31,8 @@ app.use("/uploads/orgs", express.static(path.join(__dirname, "uploads/orgs")));
 app.use("/uploads/icons", express.static(path.join(__dirname, "uploads/icons")));
 app.use("/uploads/providers", express.static(path.join(__dirname, "uploads/providers")));
 app.use("/uploads/banners", express.static(path.join(__dirname, "uploads/banners")));
+app.use("/uploads/organization", express.static(path.join(__dirname, "uploads/organization")));
+app.use("/uploads/profile", express.static(path.join(__dirname, "uploads/profile")));
 
 // ===== Routes =====
 app.use("/api/admin", adminRoutes);
@@ -44,6 +47,7 @@ app.use("/api/auth/organization", organizationLoginRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/booking-master", bookingMasterRoutes);
 app.use("/api/booking-details", bookingDetailsRoutes);
+app.use("/api/reviews", reviewsRoutes);
 
 // ===== Root route =====
 app.get("/", (req, res) => {

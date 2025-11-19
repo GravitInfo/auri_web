@@ -15,10 +15,19 @@ import AddEditOrganizationPic from "../OrganizationPics/AddEditOrganizationPic";
 import AddEditOrgService from "../OrgServices/AddEditOrgService";
 import AddEditServiceProvider from "../ServiceProviders/AddEditServiceProvider";
 
+// import AddReview from "../Reviews/AddReview";
+import ReviewList from "../Reviews/ReviewList";
+
 // ==================== MAIN COMPONENT ====================
 export default function ViewOrganization() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const currentUser = {
+    user_id: 22,
+    u_name: "Vaishnavi Jha",
+    profile_pic: "vaishnavi.jpg",
+  };
 
   const [orgData, setOrgData] = useState(null);
   const [showPicModal, setShowPicModal] = useState(false);
@@ -127,6 +136,25 @@ export default function ViewOrganization() {
             <p className="md:col-span-2">
               <strong>About:</strong> {organization.about}
             </p>
+          )}
+
+          {/* NEW: Show Intro */}
+          {organization.intro && (
+            <p className="md:col-span-2">
+              <strong>Intro:</strong> {organization.intro}
+            </p>
+          )}
+
+          {/* NEW: Show Image */}
+          {organization.image && (
+            <div className="md:col-span-2 mt-2">
+              <strong>Image:</strong>
+              <img
+                src={`${BASE_URL}/${organization.image}`}
+                alt="Organization"
+                className="w-40 h-40 object-cover rounded-xl "
+              />
+            </div>
           )}
         </div>
       </div>
@@ -326,6 +354,19 @@ export default function ViewOrganization() {
           <p className="text-gray-500">No staff members found.</p>
         )}
       </HospitalSection>
+
+      {/* ==================== REVIEWS ==================== */}
+      <div className="bg-white border border-[#cceae6] rounded-3xl p-6 shadow-md mt-10">
+        {/* <h2 className="text-2xl font-semibold text-[#1b3a7a] mb-4">
+          Reviews & Ratings
+        </h2> */}
+
+        {/* Admin cannot add review, so AddReview is optional */}
+        {/* {currentUser && <AddReview organizationId={id} user={currentUser} />} */}
+
+        {/* List of Reviews */}
+        <ReviewList organizationId={id} />
+      </div>
 
       {/* ==================== MODALS ==================== */}
       {showPicModal && (

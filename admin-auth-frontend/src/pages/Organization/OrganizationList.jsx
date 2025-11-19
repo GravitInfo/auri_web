@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../utils/config";
+import api, { BASE_URL } from "../../utils/config";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
 import AddEditOrganization from "./AddEditOrganization";
 
@@ -61,6 +61,9 @@ export default function OrganizationList() {
           <thead className="bg-[#e6f5f3] text-[#155e54]">
             <tr>
               <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
+                Picture
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
                 Name
               </th>
               <th className="px-6 py-3 text-left font-semibold text-gray-600 uppercase tracking-wide">
@@ -85,14 +88,34 @@ export default function OrganizationList() {
                   key={org.id}
                   className="hover:bg-gray-50 transition-all duration-200"
                 >
+                  {/* IMAGE COLUMN */}
+                  <td className="px-6 py-4">
+                    {org.image ? (
+                      <img
+                        src={
+                          org.image
+                            ? `${BASE_URL}/${org.image}`
+                            : "/placeholder.png"
+                        }
+                        alt={org.name}
+                        className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                        N/A
+                      </div>
+                    )}
+                  </td>
+
                   <td className="px-6 py-4 font-medium text-gray-800">
                     {org.name}
                   </td>
                   <td className="px-6 py-4 text-gray-700">{org.email}</td>
                   <td className="px-6 py-4 text-gray-700">{org.city}</td>
                   <td className="px-6 py-4 text-gray-700">{org.country}</td>
+
+                  {/* ACTIONS */}
                   <td className="px-6 py-4 flex items-center gap-2">
-                    {/* Edit */}
                     <button
                       onClick={() => {
                         setEditOrg(org);
@@ -103,8 +126,9 @@ export default function OrganizationList() {
                     >
                       <Pencil size={18} />
                     </button>
+
                     <span className="text-gray-400">|</span>
-                    {/* View */}
+
                     <button
                       onClick={() =>
                         navigate(`/dashboard/organization/${org.id}`)
@@ -114,9 +138,9 @@ export default function OrganizationList() {
                     >
                       <Eye size={18} />
                     </button>
+
                     <span className="text-gray-400">|</span>
 
-                    {/* Delete */}
                     <button
                       onClick={() => handleDelete(org.id)}
                       className="text-red-600 hover:text-red-700 transition"

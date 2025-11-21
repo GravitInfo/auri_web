@@ -24,6 +24,10 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB max
 
 // ==================== Routes ====================
+
+router.get("/", usersController.getAllUsers);
+router.get("/:id", usersController.getUserById);
+
 // Register user with optional profile image
 router.post("/register", upload.single("profile_pic"), usersController.registerUser);
 

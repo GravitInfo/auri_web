@@ -95,3 +95,18 @@ exports.deleteBookingDetail = async (req, res) => {
     res.status(500).json({ error: "Failed to delete booking detail" });
   }
 };
+
+exports.getByCustomer = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const data = await BookingDetails.getByCustomer(userId);
+
+    res.json({
+      success: true,
+      count: data.length,
+      bookings: data,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Error fetching customer bookings", error: err });
+  }
+};

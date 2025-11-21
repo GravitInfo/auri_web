@@ -14,8 +14,11 @@ import OrganizationDashboard from "./pages/orgLogin/OrganizationDashboard";
 import OrganizationMenu from "./pages/orgLogin/OrganizationMenu";
 import OrganizationLayout from "./pages/orgLogin/OrganizationLayout";
 import OrgProtectedRoute from "./components/OrgProtectedRoute";
-import OrganizationBookings from "./pages/orgLogin/Bookings/OrganizationBookings"; // default import
+import OrganizationBookings from "./pages/orgLogin/Bookings/OrganizationBookings";
 import OrganizationViewBookings from "./pages/orgLogin/Bookings/OrganizationViewBookings";
+
+import OrganizationCustomerList from "./pages/orgLogin/customers/OrganizationCustomerList";
+import OrganizationViewCustomer from "./pages/orgLogin/customers/OrganizationViewCustomer";
 
 function App() {
   return (
@@ -24,7 +27,6 @@ function App() {
         {/* ---------------- Admin Routes ---------------- */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-
         <Route
           path="/dashboard/*"
           element={
@@ -48,9 +50,14 @@ function App() {
           {/* Nested routes inside OrganizationLayout */}
           <Route path="dashboard" element={<OrganizationDashboard />} />
           <Route path="profile" element={<OrganizationMenu />} />
+
+          {/* Organization Bookings */}
           <Route path="bookings" element={<OrganizationBookings />} />
           <Route path="bookings/:id" element={<OrganizationViewBookings />} />
-          {/* Add more organization pages here */}
+
+          {/* Organization Customers */}
+          <Route path="customers" element={<OrganizationCustomerList />} />
+          <Route path="customers/:id" element={<OrganizationViewCustomer />} />
         </Route>
 
         {/* ---------------- Catch-all ---------------- */}

@@ -23,7 +23,9 @@ export default function Sidebar({ onLogout }) {
       setActive("Banner");
     } else if (location.pathname.startsWith("/dashboard/bookings")) {
       setActive("Bookings");
-    } else if (location.pathname === "/dashboard") {
+    } else if (location.pathname.startsWith("/dashboard/customers")) {
+      setActive("Customer");
+    }else if (location.pathname === "/dashboard") {
       setActive("Dashboard");
     }
   }, [location.pathname]);
@@ -34,6 +36,7 @@ export default function Sidebar({ onLogout }) {
     { name: "Service Categories", path: "/dashboard/serviceCat", icon: <Layers className="w-5 h-5" /> },
     { name: "Banner", path: "/dashboard/banners", icon: <BannerIcon className="w-5 h-5" /> },
     { name: "Bookings", path: "/dashboard/bookings", icon: <CalendarCheck  className="w-5 h-5" /> },
+    { name: "Customers", path: "/dashboard/customers", icon: <Users  className="w-5 h-5" /> },
   ];
 
   const handleMenuClick = (item) => {

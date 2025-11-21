@@ -3,20 +3,29 @@ const db = require("../config/db");
 const Reviews = {
   // ➤ Add a new review
   addReview: async (data) => {
-    const { user_id, organization_id, rating, review_text, user_name, user_profile } = data;
+    const {
+      user_id,
+      organization_id,
+      rating,
+      review_text,
+      user_name,
+      user_profile
+    } = data;
 
     const sql = `
       INSERT INTO reviews 
       (user_id, organization_id, rating, review_text, user_name, user_profile) 
       VALUES (?, ?, ?, ?, ?, ?)
     `;
+
+    // FIX: user_id = null allowed, NOT 0
     const [result] = await db.query(sql, [
-      user_id,
+      user_id || null,
       organization_id,
       rating,
       review_text,
       user_name,
-      user_profile,
+      user_profile || null
     ]);
 
     return result.insertId;

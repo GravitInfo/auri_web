@@ -1,40 +1,101 @@
 const bcrypt = require("bcrypt");
 const Organization = require("../models/organizationModel");
+const db = require("../config/db");
 
 const OrganizationController = {
-  // 🔹 Get all organizations with avg rating and review count
-  getAll: async (req, res) => {
+
+  // 🔹 GET ALL CUSTOMERS FOR THIS ORG
+  getAllCustomers: async (req, res) => {
     try {
-      const data = await Organization.getAllWithReviews(); // ✅ use the method with LEFT JOIN
-      res.json(data);
+      const { orgId } = req.params;
+
+      const sql = `
+        SELECT DISTINCT 
+          u.user_id,
+          u.u_name,
+          u.user_email,
+          u.u_mobile,
+          u.profile_pic
+        FROM users u
+        JOIN Booking_Master bm ON bm.user_id = u.user_id
+        JOIN Booking_Details bd ON bd.booking_id = bm.booking_id
+        WHERE bd.org_sid IN (
+          SELECT org_sid FROM org_services WHERE orgid = ?
+        )
+        ORDER BY u.u_name
+      `;
+
+      const [rows] = await db.query(sql, [orgId]);
+
+      res.json(rows);
     } catch (err) {
-      console.error("❌ getAll error:", err);
+      console.error("❌ getAllCustomers error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },
 
-  // 🔹 Get single organization by ID (with pics, services, providers, reviews)
+  // 🔹 GET ALL BOOKINGS OF A SPECIFIC CUSTOMER FOR THIS ORG
+  getCustomerBookings: async (req, res) => {
+    try {
+      const { orgId, userId } = req.params;
+
+      const sql = `
+        SELECT 
+          bm.booking_id,
+          bm.date_of_pur,
+          bm.amt,
+
+          bd.p_date,
+          bd.p_time,
+          bd.sp_id,
+
+          s.service_name,
+          sp.sp_name AS provider_name
+
+        FROM Booking_Master bm
+        JOIN Booking_Details bd ON bm.booking_id = bd.booking_id
+        JOIN org_services s ON bd.org_sid = s.org_sid
+        JOIN service_providers sp ON bd.sp_id = sp.sp_id
+
+        WHERE s.orgid = ? AND bm.user_id = ?
+
+        ORDER BY bd.p_date DESC, bd.p_time DESC
+      `;
+
+      const [rows] = await db.query(sql, [orgId, userId]);
+      res.json(rows);
+    } catch (err) {
+      console.error("❌ getCustomerBookings error:", err);
+      res.status(500).json({ message: "Server error", details: err.message });
+    }
+  },
+
+  // ----- ALREADY EXISTING FUNCTIONS BELOW -----
+
+  getAll: async (req, res) => {
+    try {
+      const data = await Organization.getAllWithReviews();
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ message: "Server error", details: err.message });
+    }
+  },
+
   getById: async (req, res) => {
     try {
       const id = req.params.id;
       const data = await Organization.getFullDetailsById(id);
+      if (!data) return res.status(404).json({ message: "Organization not found" });
 
-      if (!data) {
-        return res.status(404).json({ message: "Organization not found" });
-      }
-
-      res.json(data); // ✅ now includes formatted reviews + avg_rating + review_count
+      res.json(data);
     } catch (err) {
-      console.error("❌ getById error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },
 
-  // 🔹 Create organization
   create: async (req, res) => {
     try {
       const orgData = { ...req.body };
-
       if (req.file) orgData.image = "uploads/organization/" + req.file.filename;
 
       if (orgData.password) {
@@ -50,12 +111,10 @@ const OrganizationController = {
         organization: newOrg,
       });
     } catch (err) {
-      console.error("❌ create error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },
 
-  // 🔹 Update organization
   update: async (req, res) => {
     try {
       const id = req.params.id;
@@ -64,26 +123,18 @@ const OrganizationController = {
       if (req.file) orgData.image = "uploads/organization/" + req.file.filename;
 
       if (orgData.password && orgData.password.trim() !== "") {
-        const saltRounds = 10;
-        orgData.password = await bcrypt.hash(orgData.password, saltRounds);
-      } else {
-        delete orgData.password;
-      }
+        orgData.password = await bcrypt.hash(orgData.password, 10);
+      } else delete orgData.password;
 
       const affected = await Organization.update(id, orgData);
-
-      if (!affected) {
-        return res.status(404).json({ message: "Organization not found" });
-      }
+      if (!affected) return res.status(404).json({ message: "Organization not found" });
 
       res.json({ message: "Organization updated successfully" });
     } catch (err) {
-      console.error("❌ update error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },
 
-  // 🔹 Delete organization
   delete: async (req, res) => {
     try {
       const affected = await Organization.delete(req.params.id);
@@ -91,7 +142,6 @@ const OrganizationController = {
 
       res.json({ message: "Organization deleted successfully" });
     } catch (err) {
-      console.error("❌ delete error:", err);
       res.status(500).json({ message: "Server error", details: err.message });
     }
   },

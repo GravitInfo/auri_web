@@ -15,7 +15,7 @@ import AddEditOrganizationPic from "../OrganizationPics/AddEditOrganizationPic";
 import AddEditOrgService from "../OrgServices/AddEditOrgService";
 import AddEditServiceProvider from "../ServiceProviders/AddEditServiceProvider";
 
-// import AddReview from "../Reviews/AddReview";
+import AddReview from "../Reviews/AddReview";
 import ReviewList from "../Reviews/ReviewList";
 
 // ==================== MAIN COMPONENT ====================
@@ -362,7 +362,7 @@ export default function ViewOrganization() {
         </h2> */}
 
         {/* Admin cannot add review, so AddReview is optional */}
-        {/* {currentUser && <AddReview organizationId={id} user={currentUser} />} */}
+        {currentUser && <AddReview organizationId={id} user={currentUser} />}
 
         {/* List of Reviews */}
         <ReviewList organizationId={id} />

@@ -1,23 +1,59 @@
 const db = require("../config/db");
 
 const Users = {
-  create: async ({ user_email, u_name, u_mobile, profile_pic, address, city, zip, password }) => {
+  create: async ({
+    user_email,
+    u_name,
+    u_mobile,
+    profile_pic,
+    address,
+    city,
+    zip,
+    password,
+  }) => {
     const [result] = await db.query(
       `INSERT INTO users 
        (user_email, u_name, u_mobile, profile_pic, address, city, zip, password, status) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user_email, u_name, u_mobile, profile_pic, address, city, zip, password, "inactive"]
+      [
+        user_email,
+        u_name,
+        u_mobile,
+        profile_pic,
+        address,
+        city,
+        zip,
+        password,
+        "inactive",
+      ]
     );
     return result.insertId;
   },
 
+  getAll: async () => {
+    const [rows] = await db.query("SELECT * FROM users ORDER BY user_id DESC");
+    return rows;
+  },
+
+  findById: async (id) => {
+    const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [
+      id,
+    ]);
+    return rows[0];
+  },
+
   findByEmail: async (user_email) => {
-    const [rows] = await db.query("SELECT * FROM users WHERE user_email = ?", [user_email]);
+    const [rows] = await db.query("SELECT * FROM users WHERE user_email = ?", [
+      user_email,
+    ]);
     return rows[0];
   },
 
   updateStatus: async (user_email, status) => {
-    const [result] = await db.query("UPDATE users SET status = ? WHERE user_email = ?", [status, user_email]);
+    const [result] = await db.query(
+      "UPDATE users SET status = ? WHERE user_email = ?",
+      [status, user_email]
+    );
     return result.affectedRows;
   },
 
@@ -37,5 +73,3 @@ const Users = {
 };
 
 module.exports = Users;
-
-

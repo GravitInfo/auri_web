@@ -27,6 +27,11 @@ const createReview = async (req, res) => {
   try {
     let reviewData = { ...req.body };
 
+    // FIX: When user is ORG admin → user_id must be NULL, not 0
+    if (!reviewData.user_id || reviewData.user_id === "0") {
+      reviewData.user_id = null;
+    }
+
     // If image uploaded
     if (req.file) {
       reviewData.user_profile = `http://localhost:6001/uploads/profile/${req.file.filename}`;

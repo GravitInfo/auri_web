@@ -8,6 +8,8 @@ import AddEditOrgService from "../OrgServices/AddEditOrgService";
 import AddEditServiceProvider from "../ServiceProviders/AddEditServiceProvider";
 import AddEditOrganization from "../Organization/AddEditOrganization";
 
+import OrganizationReviewSection from "./review/OrganizationReviewSection";
+
 export default function OrganizationMenuPage() {
   const [orgData, setOrgData] = useState(null);
 
@@ -311,6 +313,11 @@ export default function OrganizationMenuPage() {
           <p className="text-gray-500">No staff found.</p>
         )}
       </HospitalSection>
+
+<div className="bg-white border border-[#cceae6] rounded-3xl p-6 shadow-md mt-10">
+  <OrganizationReviewSection orgId={orgId} />
+</div>
+      
 
       {/* ==================== MODALS ==================== */}
       {showEditOrgModal && (

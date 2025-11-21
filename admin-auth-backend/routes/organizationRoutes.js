@@ -4,28 +4,25 @@ const organizationController = require("../controllers/organizationController");
 const multer = require("multer");
 const path = require("path");
 
-// ======================================
-// ✅ Multer setup for Organization Image
+// Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/organization'),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, Date.now() + ext);
-  },
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
 });
-
 const upload = multer({ storage });
 
-
-// ======================================
-// ✅ Routes
-// ======================================
+// MAIN ROUTES
 router.get("/", organizationController.getAll);
 router.get("/:id", organizationController.getById);
 
-// 🔥 Upload organization image (same as serviceCat style)
+// IMAGE UPLOAD ROUTES
 router.post("/", upload.single("image"), organizationController.create);
 router.put("/:id", upload.single("image"), organizationController.update);
+
+// --- CUSTOMER & BOOKING APIs ---
+router.get("/:orgId/customers", organizationController.getAllCustomers);
+router.get("/:orgId/customers/:userId/bookings", organizationController.getCustomerBookings);
 
 router.delete("/:id", organizationController.delete);
 

@@ -127,10 +127,30 @@ const resendOtp = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await Users.getAll();
+    res.json({ users });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getUserById = async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   verifyOtp,
   loginUser,
   resendOtp,
+  getAllUsers,
+  getUserById
 };
 

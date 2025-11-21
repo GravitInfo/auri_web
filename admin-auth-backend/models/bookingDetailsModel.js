@@ -146,6 +146,56 @@ const BookingDetails = {
     return rows;
   },
 
+  // ✅ Get all bookings for a specific customer 
+getByCustomer: async (userId) => {
+  const sql = `
+    SELECT 
+      bd.booking_dt_id,
+      bd.booking_id,
+      bd.org_sid,
+      bd.p_date,
+      bd.p_time,
+      bd.sp_id,
+
+      bm.date_of_pur AS booking_date,
+      bm.amt AS booking_amount,
+
+      u.user_id,
+      u.u_name AS user_name,
+      u.user_email,
+      u.u_mobile,
+      u.profile_pic AS user_profile_pic,
+
+      o.id AS org_id,
+      o.name AS org_name,
+      o.email AS org_email,
+      o.phone_no AS org_phone,
+      o.city AS org_city,
+      o.address AS org_address,
+
+      os.sr_name AS service_name,
+      os.rate AS service_rate,
+      os.duration,
+      os.icon AS service_icon,
+
+      sp.sp_name AS provider_name,
+      sp.pic AS provider_pic,
+      sp.designation AS provider_designation
+
+    FROM Booking_Details bd
+    JOIN Booking_Master bm ON bd.booking_id = bm.booking_id
+    JOIN users u ON bm.user_id = u.user_id
+    JOIN org_services os ON bd.org_sid = os.org_sid
+    JOIN organization o ON os.orgid = o.id
+    JOIN service_providers sp ON bd.sp_id = sp.sp_id
+    WHERE u.user_id = ?
+    ORDER BY bd.booking_dt_id DESC
+  `;
+
+  const [rows] = await db.query(sql, [userId]);
+  return rows;
+},
+
   getByOrganization: async (orgId) => {
     const sql = `
       SELECT 

@@ -13,7 +13,10 @@ export default function OrganizationSidebar({ onLogout }) {
       setActive("Bookings");
     } else if (location.pathname.startsWith("/organization/profile")) {
       setActive("Profile");
-    } else if (location.pathname.startsWith("/organization/dashboard")) {
+    } else if (location.pathname.startsWith("/organization/customers")) {
+      setActive("Customers");
+    } 
+    else if (location.pathname.startsWith("/organization/dashboard")) {
       setActive("Dashboard");
     }
   }, [location.pathname]);
@@ -21,7 +24,8 @@ export default function OrganizationSidebar({ onLogout }) {
   const menuItems = [
     { name: "Dashboard", path: "/organization/dashboard", icon: <Home className="w-5 h-5" /> },
     { name: "Profile", path: "/organization/profile", icon: <Users className="w-5 h-5" /> },
-    { name: "Bookings", path: "/organization/Bookings", icon: <CalendarCheck  className="w-5 h-5" /> }
+    { name: "Bookings", path: "/organization/Bookings", icon: <CalendarCheck  className="w-5 h-5" /> },
+    { name: "Customers", path: "/organization/customers", icon: <Users  className="w-5 h-5" /> }
   ];
 
   const handleMenuClick = (item) => {

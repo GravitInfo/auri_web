@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const bookingDetailsController = require("../controllers/bookingDetailsController");
 
+// --- STATIC ROUTES FIRST ---
 router.get("/", bookingDetailsController.getAllBookingDetails);
 router.get("/by-booking/:booking_id", bookingDetailsController.getByBookingId);
-
-// ✅ Must come BEFORE /:id
 router.get("/org/:orgId", bookingDetailsController.getBookingsByOrganization);
 
-// Dynamic route at the end
-router.get("/:id", bookingDetailsController.getBookingDetailsById);
+// ✅ Customer booking route (MUST be above /:id)
+router.get("/customer/:userId", bookingDetailsController.getByCustomer);
 
+// --- DYNAMIC ROUTES AT BOTTOM ---
+router.get("/:id", bookingDetailsController.getBookingDetailsById);
 router.post("/", bookingDetailsController.addBookingDetail);
 router.delete("/:id", bookingDetailsController.deleteBookingDetail);
 
 module.exports = router;
-

@@ -1,13 +1,18 @@
+// AddReview.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import { FaStar } from "react-icons/fa"; // Using react-icons for stars
+import "../../AddReview.css";
+import { BASE_URL } from "../../utils/config";
 
-const AddReview = ({ organizationId, user }) => {
+const AddReview = ({ organizationId, user, onReviewAdded }) => {
   const [rating, setRating] = useState(5);
+  const [hover, setHover] = useState(0);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -21,10 +26,14 @@ const AddReview = ({ organizationId, user }) => {
         user_profile: user.profile_pic
       };
 
-      const res = await axios.post("/api/reviews/add", body);
+      await axios.post(`${BASE_URL}/api/reviews/add`, body);
+
       setMessage("Review added successfully!");
       setText("");
       setRating(5);
+      setHover(0);
+
+      if (onReviewAdded) onReviewAdded(); // 🔥 notify parent to refresh
     } catch (err) {
       console.error(err);
       setMessage("Error adding review.");
@@ -34,30 +43,47 @@ const AddReview = ({ organizationId, user }) => {
   };
 
   return (
-    <div className="add-review">
-      <h3>Add a Review</h3>
-      <form onSubmit={handleSubmit}>
-        <label>Rating:</label>
-        <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-          {[1,2,3,4,5].map((n) => (
-            <option key={n} value={n}>{n}</option>
-          ))}
-        </select>
+    <div className="add-review-card">
+      <h2 className="review-title">Share Your Feedback</h2>
 
-        <label>Review:</label>
+      <form onSubmit={handleSubmit} className="review-form">
+        <div className="rating-stars">
+          {[...Array(5)].map((_, index) => {
+            const starValue = index + 1;
+            return (
+              <label key={index}>
+                <input
+                  type="radio"
+                  name="rating"
+                  value={starValue}
+                  onClick={() => setRating(starValue)}
+                />
+                <FaStar
+                  className="star"
+                  color={starValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+                  size={30}
+                  onMouseEnter={() => setHover(starValue)}
+                  onMouseLeave={() => setHover(0)}
+                />
+              </label>
+            );
+          })}
+        </div>
+
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Write your review..."
           required
+          className="review-textarea"
         />
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="review-submit">
           {loading ? "Submitting..." : "Submit Review"}
         </button>
       </form>
 
-      {message && <p>{message}</p>}
+      {message && <p className="review-message">{message}</p>}
     </div>
   );
 };

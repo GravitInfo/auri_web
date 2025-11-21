@@ -35,6 +35,9 @@ import ViewBanner from "./Banner/ViewBanner";
 import  Bookings  from "./Bookings/Bookings";
 import  ViewBookings  from "./Bookings/ViewBookings";
 
+import Customer from "./customer/CustomerList";
+import ViewCustomer from "./customer/ViewCustomer";
+
 // ---------------------- Dashboard Overview ----------------------
 const DashboardOverview = () => {
   const stats = [
@@ -200,6 +203,10 @@ export default function Dashboard() {
           {/* Settings */}
           <Route path="bookings" element={ <Bookings/> } />
           <Route path="bookings/:id" element={ <ViewBookings/> } />
+
+          <Route path="customers" element={ <Customer/> } />
+          <Route path="customers/:id" element={ <ViewCustomer/> } />
+
 
         </Routes>
       </div>
